@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://rumseyofsandbankscouk.14-1.a01.co.uk");
 
 $params = $_GET;
 if ($params) {
