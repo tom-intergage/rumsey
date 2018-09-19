@@ -11,7 +11,7 @@ if ($params) {
     print_r($json);
 }
 else {
-    echo "{\"Error\":\"No Parameters Supplied\"}";
+    echo "{\"Fatal Error\":\"No Parameters Supplied\"}";
 }
 
 ?>
