@@ -47,6 +47,24 @@ class ComposerAutoloaderInitcad61c58355727250318792bbdd4ec6c
 
         $loader->register(true);
 
+        if ($useStaticLoader) {
+            $includeFiles = Composer\Autoload\ComposerStaticInitcad61c58355727250318792bbdd4ec6c::$files;
+        } else {
+            $includeFiles = require __DIR__ . '/autoload_files.php';
+        }
+        foreach ($includeFiles as $fileIdentifier => $file) {
+            composerRequirecad61c58355727250318792bbdd4ec6c($fileIdentifier, $file);
+        }
+
         return $loader;
+    }
+}
+
+function composerRequirecad61c58355727250318792bbdd4ec6c($fileIdentifier, $file)
+{
+    if (empty($GLOBALS['__composer_autoload_files'][$fileIdentifier])) {
+        require $file;
+
+        $GLOBALS['__composer_autoload_files'][$fileIdentifier] = true;
     }
 }
