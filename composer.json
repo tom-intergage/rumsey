@@ -1,7 +1,0 @@
-{
-  "name": "Rumsey",
-  "description": "To catch an XML butterfly",
-  "require": {
-    "silex/silex": "~1.1"
-  }
-}
