@@ -5,7 +5,13 @@ header("Access-Control-Allow-Origin: http://rumseyofsandbankscouk.14-1.a01.co.uk
 $params = $_GET;
 if ($params) {
     $odta = "bVQ%3DGMJE%26PVQ%3D-E";
-    $url = 'http://hbofeeds.booking-system.net/HBO_Availability_XML.asp?odta='.$odta;
+    $selectedMonth = $params['selectedMonth'];
+
+    $pstring = "?odta=".$odta;
+
+    $pstring .= ($params['selectedMonth']) ? "&selectedMonth=".$params["selectedMonth"]: "";
+
+    $url = 'http://hbofeeds.booking-system.net/HBO_Availability_XML.asp?'.$pstring;
     $xml = simplexml_load_file($url);
     $json = json_encode($xml,JSON_PRETTY_PRINT);
     print_r($json);
