@@ -9,8 +9,6 @@ if ($params) {
 
     $pstring = "?odta=".$odta;
 
-    $pstring .= ($params['selectedMonth']) ? "&selectedMonth=".$params["selectedMonth"]: "";
-
     $url = 'http://hbofeeds.booking-system.net/HBO_Availability_XML.asp?'.$pstring;
     $xml = simplexml_load_file($url);
     $json = json_encode($xml,JSON_PRETTY_PRINT);
