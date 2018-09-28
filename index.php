@@ -12,13 +12,11 @@ if ($params['view']) :
     
     elseif ($params['view'] == 'offers') :
         $url = $urlbase . 'HBO_Prices_XML.asp?odta='.$odta;
-
     else :
         $error == true;
-    
     endif;
 
-    if (!$error) :
+    if ($error !== true) :
         $xml = simplexml_load_file($url);
         $json = json_encode($xml,JSON_PRETTY_PRINT);
         print_r($json);
@@ -28,7 +26,7 @@ else :
     $error = true;
 endif;
 
-if ($error) {
+if ($error == true) {
     echo "{\"Error\":\"No Views Specified\"}";
 }
 
