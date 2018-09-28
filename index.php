@@ -86,7 +86,7 @@ if (file_exists($filename)) {
     $minutes = $diff->format('%i');
 
     //IF THE FILE IS OLDER THAN FIVE MINUTES GET IT AGAIN
-    if ($minutes > -1) process($view);
+    if ($minutes > 5) process($view);
     
     //OTHERWISE JUST RETURN THE FILE 
     else print_r(file_get_contents($view.'.json'));
