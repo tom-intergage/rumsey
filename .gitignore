@@ -1,2 +1,6 @@
 vendor/
 .env
+availability.json
+combined.json
+offers.json
+prices.json

@@ -1,33 +1,111 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 header("Access-Control-Allow-Origin: *");
-$error = false;
-$params = $_GET;
 
-if ($params['view']) :
+//GENERAL RULES FOR THE VIEW AND ERRORS
+$error = false;
+$view = $_GET['view'];
+$filename = $view.'.json';
+
+//IF WE HAVE SPECIFIED A VIEW
+if ($view) :
+
+function process($view) {
     $odta = "bVQ%3DGMJE%26PVQ%3D-E";
     $urlBase = "http://hbofeeds.booking-system.net/";
-    if ($params['view'] == 'availability') :
-        $url = $urlbase . 'HBO_Availability_XML.asp?odta='.$odta;
-    
-    elseif ($params['view'] == 'offers') :
-        $url = $urlbase . 'HBO_Prices_XML.asp?odta='.$odta;
+    if ($view == 'availability') :
+        $url = $urlBase . 'HBO_Availability_XML.asp?odta='.$odta;
+        $xmlA = simplexml_load_file($url);
+        $output = $xmlA;
+    elseif ($view == 'prices') :
+        $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta);
+        $output = $xmlB;
+    elseif ($view == 'combined') :
+        $xmlA = simplexml_load_file($urlBase . 'HBO_Availability_XML.asp?odta='.$odta);
+        $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta);   
+        $jsona = json_encode($xmlA);  
+        $ja = (array) json_decode($jsona);
+        $jsonb = json_encode($xmlB);
+        $jb = (array) json_decode($jsonb);
+        $output = array();
+        $i = 0;
+        foreach ($ja['property'] as $k => $v) {
+            $keyA = $ja['property'][$k]->propertyid;
+            $keyB = $jb['property'][$k]->propertyid;
+            if ($keyA == $keyB) {
+                $output[$i] = $ja['property'][$k];
+                $output[$i]->propertyPrices = $jb['property'][$k]->propertyPrices;
+                $i++;
+            }
+        }
+    elseif ($view == 'offers') :
+        $xmlA = simplexml_load_file($urlBase . 'HBO_Availability_XML.asp?odta='.$odta);
+        $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta);   
+        $jsona = json_encode($xmlA);  
+        $ja = (array) json_decode($jsona);
+        $jsonb = json_encode($xmlB);
+        $jb = (array) json_decode($jsonb);
+        $output = array();
+        $i = 0;
+        foreach ($ja['property'] as $k => $v) {
+            $keyA = $ja['property'][$k]->propertyid;
+            $keyB = $jb['property'][$k]->propertyid;
+            if ($keyA == $keyB && $jb['property'][$k]->propertyOneOffBreaks) {
+                $output[$i] = $ja['property'][$k];
+                $output[$i]->propertyPrices = $jb['property'][$k]->propertyOneOffBreaks;
+                $i++;
+            }
+        }
     else :
         $error == true;
     endif;
 
     if ($error !== true) :
-        $xml = simplexml_load_file($url);
-        $json = json_encode($xml,JSON_PRETTY_PRINT);
-        print_r($json);
+        $j = json_encode($output,JSON_PRETTY_PRINT);
+        $fp = fopen($view.'.json', 'w');
+        fwrite($fp, $j);
+        fclose($fp);
+        print_r(file_get_contents($view.'.json'));
     endif;
+}
 
+//IF WE HAVE A JSON FILE FOR THIS VIEW
+if (file_exists($filename)) {
+    //CURRENT TIME
+    $n = date("F d Y H:i:s",time());
+    $now = date_create($n);
+
+    //FILE WRITE TIME
+    $m = date("F d Y H:i:s",filemtime($filename));
+    $mod = date_create($m);
+
+    //DIFFERENCE BETWEEN THE TWO
+    $diff = date_diff($now, $mod);
+
+    //IN MINUTES    
+    $minutes = $diff->format('%i');
+
+    //IF THE FILE IS OLDER THAN FIVE MINUTES GET IT AGAIN
+    if ($minutes > -1) process($view);
+    
+    //OTHERWISE JUST RETURN THE FILE 
+    else print_r(file_get_contents($view.'.json'));
+    
+}
+
+//OTHERWISE MAKE ONE AND PRINT IT
+else {
+    process($view);
+}
+
+//WITHOUT A VIEW, SET ERRORS TO BE TRUE
 else :
     $error = true;
 endif;
 
+//AN ERROR IN VALID JSON FOR WHEN A VIEW ISN'T SPECIFIED
 if ($error == true) {
-    echo "{\"Error\":\"No Views Specified\"}";
+    echo "{\"Error\":\"Define a correct view\"}";
 }
 
 ?>
