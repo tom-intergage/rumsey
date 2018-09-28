@@ -15,14 +15,14 @@ function process($view) {
     $urlBase = "http://hbofeeds.booking-system.net/";
     if ($view == 'availability') :
         $url = $urlBase . 'HBO_Availability_XML.asp?odta='.$odta;
-        $xmlA = simplexml_load_file($url);
+        $xmlA = simplexml_load_file($urlnull, LIBXML_NOCDATA);
         $output = $xmlA;
     elseif ($view == 'prices') :
-        $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta);
+        $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odtanull, LIBXML_NOCDATA);
         $output = $xmlB;
     elseif ($view == 'combined') :
-        $xmlA = simplexml_load_file($urlBase . 'HBO_Availability_XML.asp?odta='.$odta);
-        $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta);   
+        $xmlA = simplexml_load_file($urlBase . 'HBO_Availability_XML.asp?odta='.$odtanull, LIBXML_NOCDATA);
+        $xmlB =  simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odtanull, LIBXML_NOCDATA);   
         $jsona = json_encode($xmlA);  
         $ja = (array) json_decode($jsona);
         $jsonb = json_encode($xmlB);
@@ -35,12 +35,14 @@ function process($view) {
             if ($keyA == $keyB) {
                 $output[$i] = $ja['property'][$k];
                 $output[$i]->propertyPrices = $jb['property'][$k]->propertyPrices;
+                if ($jb['property'][$k]->propertyOneOffBreaks) 
+                $output[$i]->propertyOneOffBreaks = $jb['property'][$k]->propertyOneOffBreaks;
                 $i++;
             }
         }
     elseif ($view == 'offers') :
-        $xmlA = simplexml_load_file($urlBase . 'HBO_Availability_XML.asp?odta='.$odta);
-        $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta);   
+        $xmlA = simplexml_load_file($urlBase . 'HBO_Availability_XML.asp?odta='.$odta,null, LIBXML_NOCDATA);
+        $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta,null, LIBXML_NOCDATA);   
         $jsona = json_encode($xmlA);  
         $ja = (array) json_decode($jsona);
         $jsonb = json_encode($xmlB);
@@ -52,7 +54,7 @@ function process($view) {
             $keyB = $jb['property'][$k]->propertyid;
             if ($keyA == $keyB && $jb['property'][$k]->propertyOneOffBreaks) {
                 $output[$i] = $ja['property'][$k];
-                $output[$i]->propertyPrices = $jb['property'][$k]->propertyOneOffBreaks;
+                $output[$i]->propertyOneOffBreaks = $jb['property'][$k]->propertyOneOffBreaks;
                 $i++;
             }
         }
@@ -86,7 +88,7 @@ if (file_exists($filename)) {
     $minutes = $diff->format('%i');
 
     //IF THE FILE IS OLDER THAN FIVE MINUTES GET IT AGAIN
-    if ($minutes > 5) process($view);
+    if ($minutes > 5 ) process($view);
     
     //OTHERWISE JUST RETURN THE FILE 
     else print_r(file_get_contents($view.'.json'));
