@@ -7,22 +7,26 @@ $error = false;
 $view = $_GET['view'];
 $filename = $view.'.json';
 
+
 //IF WE HAVE SPECIFIED A VIEW
 if ($view) :
 
+    
 function process($view) {
+
     $odta = "bVQ%3DGMJE%26PVQ%3D-E";
     $urlBase = "http://hbofeeds.booking-system.net/";
     if ($view == 'availability') :
         $url = $urlBase . 'HBO_Availability_XML.asp?odta='.$odta;
-        $xmlA = simplexml_load_file($urlnull, LIBXML_NOCDATA);
+        $xmlA = simplexml_load_file($url,null, LIBXML_NOCDATA);
         $output = $xmlA;
+       
     elseif ($view == 'prices') :
-        $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odtanull, LIBXML_NOCDATA);
+        $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta,null, LIBXML_NOCDATA);
         $output = $xmlB;
     elseif ($view == 'combined') :
-        $xmlA = simplexml_load_file($urlBase . 'HBO_Availability_XML.asp?odta='.$odtanull, LIBXML_NOCDATA);
-        $xmlB =  simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odtanull, LIBXML_NOCDATA);   
+        $xmlA = simplexml_load_file($urlBase . 'HBO_Availability_XML.asp?odta='.$odta,null, LIBXML_NOCDATA);
+        $xmlB =  simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta, null,LIBXML_NOCDATA);   
         $jsona = json_encode($xmlA);  
         $ja = (array) json_decode($jsona);
         $jsonb = json_encode($xmlB);
