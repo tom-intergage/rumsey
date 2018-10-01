@@ -84,6 +84,7 @@ if (file_exists($filename)) {
     //FILE WRITE TIME
     $m = date("F d Y H:i:s",filemtime($filename));
     $mod = date_create($m);
+    
 
     //DIFFERENCE BETWEEN THE TWO
     $diff = date_diff($now, $mod);
