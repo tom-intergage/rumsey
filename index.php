@@ -22,7 +22,7 @@ function process($view) {
         $output = $xmlA;
 
         elseif ($view == 'wakeup') :
-            echo "{\"Message\":\"I am awake!\"}";
+            $output = "{\"Message\":\"I am awake!\"}";
        
     elseif ($view == 'prices') :
         $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta,null, LIBXML_NOCDATA);
