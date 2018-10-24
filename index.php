@@ -29,7 +29,8 @@ function process($view) {
         $xmlB =  simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta, null,LIBXML_NOCDATA);   
         $jsona = json_encode($xmlA);  
         $ja = (array) json_decode($jsona);
-        $jsonb = json_encode($xmlB);
+        $jsonb = json_encode($xmlB); 
+        //COMMIT
         $jb = (array) json_decode($jsonb);
         $output = array();
         $i = 0;
