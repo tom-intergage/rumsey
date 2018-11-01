@@ -56,6 +56,7 @@ function process($view) {
             $xmlA = simplexml_load_file($url,null, LIBXML_NOCDATA);
             $jsona = json_encode($xmlA); 
             $ja = (array) json_decode($jsona);
+            $output = array();
             foreach ($ja['property'] as $k => $v) {
                 $keyA = $ja['property'][$k]->propertyid;
                 $output[$i]->propertyid = $ja['property'][$k]->propertyid;
