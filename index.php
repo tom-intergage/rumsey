@@ -23,6 +23,8 @@ function process($view) {
 
     elseif ($view == 'wakeup') :
             $output = '{"Message":"I am awake!"}';
+
+           
        
     elseif ($view == 'prices') :
         $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta,null, LIBXML_NOCDATA);
@@ -48,6 +50,20 @@ function process($view) {
                 $i++;
             }
         }
+
+        elseif ($view == 'ids') {
+            $url = $urlBase . 'HBO_Availability_XML.asp?odta='.$odta;
+            $xmlA = simplexml_load_file($url,null, LIBXML_NOCDATA);
+            $jsona = json_encode($xmlA); 
+            $ja = (array) json_decode($jsona);
+            foreach ($ja['property'] as $k => $v) {
+                $keyA = $ja['property'][$k]->propertyid;
+                $output[$i]->propertyid = $ja['property'][$k]->propertyid;
+                $output[$i]->propertyname = $ja['property'][$k]->propertyname;
+                $i++;
+            }
+        }
+
     elseif ($view == 'offers') :
         $xmlA = simplexml_load_file($urlBase . 'HBO_Availability_XML.asp?odta='.$odta,null, LIBXML_NOCDATA);
         $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta,null, LIBXML_NOCDATA);   
