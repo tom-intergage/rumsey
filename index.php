@@ -51,7 +51,7 @@ function process($view) {
             }
         }
 
-        elseif ($view == 'ids') {
+        elseif ($view == 'ids') :
             $url = $urlBase . 'HBO_Availability_XML.asp?odta='.$odta;
             $xmlA = simplexml_load_file($url,null, LIBXML_NOCDATA);
             $jsona = json_encode($xmlA); 
@@ -64,7 +64,7 @@ function process($view) {
                 $output[$i]->propertyname = $ja['property'][$k]->propertyname;
                 $i++;
             }
-        }
+        
 
     elseif ($view == 'offers') :
         $xmlA = simplexml_load_file($urlBase . 'HBO_Availability_XML.asp?odta='.$odta,null, LIBXML_NOCDATA);
