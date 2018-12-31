@@ -5,12 +5,18 @@ header("Access-Control-Allow-Origin: *");
 //GENERAL RULES FOR THE VIEW AND ERRORS
 $error = false;
 $view = $_GET['view'];
-$filename = $view.'.json';
+if ($_GET['pid']) $pid = $_GET['pid'];
 
+if ($view == 'property') {
+    $filename = $view.'_'.$pid.'.json';
+}
+
+else {
+    $filename = $view.'.json';
+}
 
 //IF WE HAVE SPECIFIED A VIEW
 if ($view) :
-
     
 function process($view) {
 
@@ -23,8 +29,7 @@ function process($view) {
 
     elseif ($view == 'wakeup') :
             $output = '{"Message":"I am awake!"}';
-
-           
+          
        
     elseif ($view == 'prices') :
         $xmlB = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta,null, LIBXML_NOCDATA);
@@ -84,16 +89,47 @@ function process($view) {
                 $i++;
             }
         }
+        elseif ($view == 'property') :
+            $pid = $_GET['pid'];
+            $xml = simplexml_load_file($urlBase . 'HBO_Prices_XML.asp?odta='.$odta,null, LIBXML_NOCDATA);
+            $jsona = json_encode($xml);  
+            $ja = (array) json_decode($jsona);
+            $output = array();
+            $i = 0;      
+            if ($pid) {
+                $error = false;
+                foreach ($ja['property'] as $k => $v) {
+                    $key = $ja['property'][$k]->propertyid;
+                    if ($key == $pid) {
+                        $output[$i] = $ja['property'][$k];
+                        $i++;
+                    }
+                }
+                if ($i == 0) {
+                    $error = true;
+                }
+            }
+            else {
+                $error = true;
+            }
+            
     else :
-        $error == true;
+        $error = true;
     endif;
 
     if ($error !== true) :
+        if ($view == 'property') {
+            $f = $view.'_'.$pid.'.json';
+        }
+        
+        else {
+            $f = $view.'.json';
+        }
         $j = json_encode($output,JSON_PRETTY_PRINT);
-        $fp = fopen($view.'.json', 'w');
+        $fp = fopen($f, 'w');
         fwrite($fp, $j);
         fclose($fp);
-        print_r(file_get_contents($view.'.json'));
+       print_r(file_get_contents($f));
     endif;
 }
 
@@ -115,7 +151,8 @@ if (file_exists($filename)) {
     $minutes = $diff->format('%i');
 
     //IF THE FILE IS OLDER THAN FIVE MINUTES GET IT AGAIN
-    if ($minutes > 5 ) process($view);
+    if ($minutes > 5 )
+    process($view);
     
     //OTHERWISE JUST RETURN THE FILE 
     else print_r(file_get_contents($view.'.json'));

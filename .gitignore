@@ -4,3 +4,5 @@ availability.json
 combined.json
 offers.json
 prices.json
+property_*.json
+ids.json
