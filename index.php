@@ -153,9 +153,19 @@ if (file_exists($filename)) {
     //IF THE FILE IS OLDER THAN FIVE MINUTES GET IT AGAIN
     if ($minutes > 5 )
     process($view);
+
     
     //OTHERWISE JUST RETURN THE FILE 
-    else print_r(file_get_contents($view.'.json'));
+    else {
+        if ($view == 'property') {
+            $f = $view.'_'.$pid.'.json';
+        }
+        
+        else {
+            $f = $view.'.json';
+        }
+        print_r(file_get_contents($f));
+    }
     
 }
 
