@@ -150,8 +150,8 @@ if (file_exists($filename)) {
     //IN MINUTES    
     $minutes = $diff->format('%i');
 
-    //IF THE FILE IS OLDER THAN FIVE MINUTES GET IT AGAIN
-    if ($minutes > 5 )
+    //IF THE FILE IS OLDER THAN TWO MINUTES GET IT AGAIN
+    if ($minutes > 2 )
     process($view);
 
     
