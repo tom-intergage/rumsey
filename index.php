@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 header("Access-Control-Allow-Origin: *");
-
+error_reporting(0);
 //REDEPLOY TEST
 
 //GENERAL RULES FOR THE VIEW AND ERRORS
